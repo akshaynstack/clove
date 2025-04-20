@@ -1,5 +1,5 @@
-const channelId = 'UCSQ7hHnWkDMyDBEp-h1Pqbg';
-const apiKey = 'AIzaSyBSZPvyikBXM62eMWdGc0Qtmdh7xWldmmQ';
+// const channelId = 'UCZy7vibLOxrNyngoHJByZfw';
+// const apiKey = 'AIzaSyBSZPvyikBXM62eMWdGc0Qtmdh7xWldmmQ';
 
 export async function getYouTubeLiveVideoId(channelId, apiKey) {
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&eventType=live&type=video&key=${apiKey}`;
