@@ -13,14 +13,13 @@ import Navigation from './Navigation.js'
 
 import assets from './assets.js'
 
-export default class Experience
-{
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
+
+export default class Experience {
     static instance
 
-    constructor(_options = {})
-    {
-        if(Experience.instance)
-        {
+    constructor(_options = {}) {
+        if (Experience.instance) {
             return Experience.instance
         }
         Experience.instance = this
@@ -28,8 +27,7 @@ export default class Experience
         // Options
         this.targetElement = _options.targetElement
 
-        if(!this.targetElement)
-        {
+        if (!this.targetElement) {
             console.warn('Missing \'targetElement\' property')
             return
         }
@@ -42,36 +40,21 @@ export default class Experience
         this.setScene()
         this.setCamera()
         this.setRenderer()
+        this.setCSSRenderer() // ⬅️ Added
         this.setResources()
         this.setWorld()
         this.setNavigation()
-        
-        this.sizes.on('resize', () =>
-        {
+
+        this.sizes.on('resize', () => {
             this.resize()
         })
 
         this.update()
     }
 
-    // static getInstance(_options = {})
-    // {
-    //     console.log(Experience.instance)
-    //     if(Experience.instance)
-    //     {
-    //         return Experience.instance
-    //     }
-        
-    //     console.log('create')
-    //     Experience.instance = new Experience(_options)
-        
-    //     return Experience.instance
-    // }
-
-    setConfig()
-    {
+    setConfig() {
         this.config = {}
-    
+
         // Pixel ratio
         this.config.pixelRatio = Math.min(Math.max(window.devicePixelRatio, 1), 2)
 
@@ -81,85 +64,84 @@ export default class Experience
         this.config.height = boundings.height || window.innerHeight
         this.config.smallestSide = Math.min(this.config.width, this.config.height)
         this.config.largestSide = Math.max(this.config.width, this.config.height)
-        
+
         // Debug
-        // this.config.debug = window.location.hash === '#debug'
         this.config.debug = this.config.width > 420
     }
 
-    setStats()
-    {
-        if(this.config.debug)
-        {
+    setStats() {
+        if (this.config.debug) {
             this.stats = new Stats(true)
         }
     }
 
-    setDebug()
-    {
-        if(this.config.debug)
-        {
+    setDebug() {
+        if (this.config.debug) {
             this.debug = new Pane()
             this.debug.containerElem_.style.width = '320px'
         }
     }
-    
-    setScene()
-    {
+
+    setScene() {
         this.scene = new THREE.Scene()
     }
 
-    setCamera()
-    {
+    setCamera() {
         this.camera = new Camera()
     }
 
-    setRenderer()
-    {
+    setRenderer() {
         this.renderer = new Renderer({ rendererInstance: this.rendererInstance })
-
         this.targetElement.appendChild(this.renderer.instance.domElement)
     }
 
-    setResources()
-    {
+    setCSSRenderer() {
+        // ✅ CSS3D Renderer setup
+        this.cssRenderer = new CSS3DRenderer()
+        this.cssRenderer.setSize(this.config.width, this.config.height)
+        this.cssRenderer.domElement.style.position = 'absolute'
+        this.cssRenderer.domElement.style.top = '0'
+        this.cssRenderer.domElement.style.left = '0'
+        this.targetElement.appendChild(this.cssRenderer.domElement)
+    }
+
+    setResources() {
         this.resources = new Resources(assets)
     }
 
-    setWorld()
-    {
+    setWorld() {
         this.world = new World()
     }
 
-    setNavigation()
-    {
+    setNavigation() {
         this.navigation = new Navigation()
     }
 
-    update()
-    {
-        if(this.stats)
+    update() {
+        if (this.stats)
             this.stats.update()
-        
+
         this.camera.update()
-        
-        if(this.renderer)
+
+        if (this.renderer)
             this.renderer.update()
 
-        if(this.world)
+        if (this.world)
             this.world.update()
 
-        if(this.navigation)
+        if (this.navigation)
             this.navigation.update()
 
-        window.requestAnimationFrame(() =>
-        {
+        // 🔁 Render CSS3D
+        if (this.cssRenderer && this.camera.instance)
+            this.cssRenderer.render(this.scene, this.camera.instance)
+
+        window.requestAnimationFrame(() => {
             this.update()
         })
     }
 
-    resize()
-    {
+    resize() {
         // Config
         const boundings = this.targetElement.getBoundingClientRect()
         this.config.width = boundings.width
@@ -169,18 +151,20 @@ export default class Experience
 
         this.config.pixelRatio = Math.min(Math.max(window.devicePixelRatio, 1), 2)
 
-        if(this.camera)
+        if (this.camera)
             this.camera.resize()
 
-        if(this.renderer)
+        if (this.renderer)
             this.renderer.resize()
 
-        if(this.world)
+        if (this.cssRenderer)
+            this.cssRenderer.setSize(this.config.width, this.config.height)
+
+        if (this.world)
             this.world.resize()
     }
 
-    destroy()
-    {
-        
+    destroy() {
+        // Optional: clean up objects, listeners, etc.
     }
 }

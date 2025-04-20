@@ -3,7 +3,7 @@
   "license": "UNLICENSED",
 "scripts": {
   "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --config ./bundler/webpack.prod.js",
-  "dev": "webpack serve --config ./bundler/webpack.dev.js",
+  "dev": "set NODE_OPTIONS=--openssl-legacy-provider && webpack serve --config ./bundler/webpack.dev.js",
   "prod": "git switch prod; git merge main; git push; git switch main"
 },
   "dependencies": {
