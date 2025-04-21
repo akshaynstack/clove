@@ -8,6 +8,7 @@ import TopChair from './TopChair.js'
 import ElgatoLight from './ElgatoLight.js'
 import BouncingLogo from './BouncingLogo.js'
 import Screen from './Screen.js'
+import CloveModel from './cloveModel.js'
 
 export default class World
 {
@@ -27,6 +28,7 @@ export default class World
                 this.setLoupedeckButtons()
                 this.setCoffeeSteam()
                 this.setTopChair()
+                this.setCloveModel()
                 this.setElgatoLight()
                 this.setBouncingLogo()
                 this.setScreens()
@@ -57,6 +59,11 @@ export default class World
     setTopChair()
     {
         this.topChair = new TopChair()
+    }
+
+    setCloveModel()
+    {
+        this.cloveModel = new CloveModel()
     }
 
     setElgatoLight()
@@ -98,6 +105,9 @@ export default class World
 
         if(this.topChair)
             this.topChair.update()
+
+        if(this.cloveModel)
+            this.cloveModel.update()
 
         if(this.bouncingLogo)
             this.bouncingLogo.update()
